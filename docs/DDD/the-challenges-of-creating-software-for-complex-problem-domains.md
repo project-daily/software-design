@@ -7,7 +7,7 @@
 Foote 和 Yoder 使用 BBoM 这个术语来描述一个看起来没有清晰架构的应用（对比一下一碗意大利面和一盘层次分明的意大利千层面）。使得软件逐步变为 BBoM 的问题也是显而易见的，也就是当工作流中的常规变更以及一些小的特性增强因阅读和理解现有代码具有困难而实现起来越来越具挑战性的时候。Eric Evans 在 [_Domain‐Driven
 Design: Tackling Complexity in the Heart of Software_ (Addison‐Wesley Professional, 2003)] 中描述了这样的系统，它包含了“做了一些有用的事，但是却没有解释怎么去做的代码”。软件变得复杂且难以管理的一个重要原因就是将领域的复杂性与技术的复杂性混在了一起。
 
-![FIGURE 1-1: Complexity in software](../../asset/images/the-challenges-of-creating-software-for-complex-problem-domains-01.png)
+![FIGURE 1-1: Complexity in software](../../asset/images/DDD/the-challenges-of-creating-software-for-complex-problem-domains-01.png)
 
 ## 没有一个使用公共语言创建的代码
 
