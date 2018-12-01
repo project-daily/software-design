@@ -23,3 +23,18 @@ Policy（政策）
 
 ![Strategy Structure](../../asset/images/DesignPatterns/strategy-structure.png)
 
+### 参与者
+
+- **Strategy**（策略）
+  - 定义所有支持的算法的公共接口。Context 使用这个接口来调用某 ConcreteStrategy 定义的算法。
+- **ConcreteStrategy**（具体策略）
+  - 以 Strategy 接口实现某具体算法。
+- **Context**（上下文）
+  - 用一个 ConcreteStrategy 对象来配置。
+  - 维护一个对 Strategy 对象的引用。
+  - 可定义一个接口来让 Strategy 访问它的数据。
+
+### 协作
+
+- Strategy 和 Context 相互作用以实现选定的算法。当算法被调用时，Context 可以将算法所需要的所有数据都传递给该 Strategy。或者，Context 可以将自身作为一个参数传递给 Strategy 操作。这就让 Strategy 在需要时可以回调 Context。
+- Context 将它的客户的请求转发给它的 Strategy。客户通常创建并传递一个 ConcreteStrategy 对象给该 Context；这样，客户仅与 Context 交互。通常有一系列的 ConcreteStrategy 类可供客户从中选择。
