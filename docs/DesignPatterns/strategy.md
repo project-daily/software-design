@@ -21,7 +21,8 @@ Policy（政策）
 
 ### 结构
 
-![Strategy Structure](../../asset/images/DesignPatterns/strategy-structure.png)
+![Strategy Structure 01](../../asset/images/DesignPatterns/strategy-structure-01.png)
+_图 1_
 
 ### 参与者
 
@@ -38,3 +39,112 @@ Policy（政策）
 
 - Strategy 和 Context 相互作用以实现选定的算法。当算法被调用时，Context 可以将算法所需要的所有数据都传递给该 Strategy。或者，Context 可以将自身作为一个参数传递给 Strategy 操作。这就让 Strategy 在需要时可以回调 Context。
 - Context 将它的客户的请求转发给它的 Strategy。客户通常创建并传递一个 ConcreteStrategy 对象给该 Context；这样，客户仅与 Context 交互。通常有一系列的 ConcreteStrategy 类可供客户从中选择。
+
+## 示例 01
+
+提示：_以下内容节选自 [TypeScript Design Patterns, Packt, Aug 2016]_。
+
+在此书中，作者提到在 JavaScript 中可以通过多种方式来组合这些策略对象或类，除了 [图 1] 外，还可以使用以下一种结构：
+
+![Strategy Structure 02 - TypeScript](../../asset/images/DesignPatterns/strategy-structure-02.png)
+_图 2_
+
+在这个结构中，Client 负责从策略表中提取特定的策略并将策略的操作应用到当前阶段。这个结构中除了没有 Context 外，存在额外三个参与者：
+
+- **Strategy Manager (Strategies)**（策略管理器）
+  - 它定义了一种数据结构用于管理这些策略对象。比如，可以使用一个简单的哈希表，数据类型名称作为 key，对应的策略对象作为 value。
+- **Target**（目标）
+  - 目标用于应用策略对象中定义的算法。
+- **Client**（客户端）
+  - 保证目标和策略管理器能够相互协作。
+
+### 实现
+
+我们有两个 `ITarget` 类型，通过字符串字面量类型 `'a'` 和 `'b'` 区分。类型为 `'a'` 的 `ITarget` 有一个类型是字符串的 `result` 属性，而类型为 `'b'` 的 `ITarget` 有一个类型是数字的 `value` 属性，接口如下：
+
+```typescript
+type TargetType = 'a' | 'b';
+
+interface ITarget {
+  type: TargetType;
+}
+
+interface ITargetA extends ITarget {
+  type: 'a';
+  result: string;
+}
+
+interface ITargetB extends ITarget {
+  type: 'b';
+  value: number;
+}
+
+interface IStrategy<TTarget extends ITarget> {
+  operationX(target: TTarget): void;
+  operationY(target: TTarget): void;
+}
+```
+
+现在我们继续定义两个 `IStrategy` 类型实现：
+
+```typescript
+let strategyA: IStrategy<ITargetA> = {
+  operationX(target: ITargetA): void {
+    target.result = target.result + target.result;
+    console.log(`strategyA.operationX: ${target.result}`);
+  },
+
+  operationY(target: ITargetA): void {
+    target.result = target
+      .result
+      .substr(Math.floor(target.result.length / 2));
+    console.log(`strategyA.operationY: ${target.result}`);
+  }
+};
+
+let strategyB: IStrategy<ITargetB> = {
+  operationX(target: ITargetB): void {
+    target.value = target.value * 2;
+    console.log(`strategyB.operationX: ${target.value}`);
+  },
+
+  operationY(target: ITargetB): void {
+    target.value = Math.floor(target.value / 2);
+    console.log(`strategyB.operationY: ${target.value}`);
+  }
+};
+```
+
+最后执行测试一下：
+
+```typescript
+let strategies: {
+  [type: string]: IStrategy<ITarget>
+} = {
+  a: strategyA,
+  b: strategyB
+};
+
+(() => {
+  const targets: ITarget[] = [
+    <ITargetA>{ type: 'a', result: 'hello' },
+    <ITargetA>{ type: 'a', result: 'world' },
+    <ITargetB>{ type: 'b', value: 10 }
+  ];
+
+  for (const target of targets) {
+    const strategy: IStrategy<ITarget> = strategies[target.type];
+    strategy.operationX(target);
+    strategy.operationY(target);
+  }
+})();
+```
+
+```bash
+strategyA.operationX: hellohello
+strategyA.operationY: hello
+strategyA.operationX: worldworld
+strategyA.operationY: world
+strategyB.operationX: 20
+strategyB.operationY: 10
+```
